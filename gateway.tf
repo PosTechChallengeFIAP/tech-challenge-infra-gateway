@@ -7,6 +7,7 @@ resource "aws_apigatewayv2_integration" "ecs_integration" {
   api_id             = aws_apigatewayv2_api.ecs_api.id
   integration_type   = "HTTP_PROXY"
   integration_uri    = "http://${aws_eip.api_eip.public_ip}"
+  integration_method = "ANY"
   connection_type    = "INTERNET"
   payload_format_version = "1.0"
 }
