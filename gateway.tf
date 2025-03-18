@@ -18,6 +18,6 @@ resource "aws_apigatewayv2_route" "ecs_route" {
 
 resource "aws_apigatewayv2_stage" "ecs_stage" {
   api_id      = aws_apigatewayv2_api.ecs_api.id
-  name        = "prod"
+  name        = ""
   auto_deploy = true
 }
