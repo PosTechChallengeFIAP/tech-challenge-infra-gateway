@@ -1,6 +1,13 @@
 resource "aws_apigatewayv2_api" "ecs_api" {
   name          = "tech-challenge"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["POST", "GET", "OPTIONS"]
+    allow_headers = ["content-type", "authorization"]
+    max_age = 300
+  }
 }
 
 resource "aws_apigatewayv2_integration" "ecs_integration" {
@@ -34,18 +41,6 @@ resource "aws_apigatewayv2_stage" "ecs_stage" {
       identitySource   = "$context.identity.sourceIp"
       identityUserAgent = "$context.identity.userAgent"
     })
-  }
-}
-
-resource "aws_apigatewayv2_route_response" "ecs_route_response" {
-  api_id       = aws_apigatewayv2_api.ecs_api.id
-  route_id     = aws_apigatewayv2_route.ecs_route.id
-  route_response_key = "$default"
-  
-  response_parameters {
-    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
-    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
   }
 }
 
