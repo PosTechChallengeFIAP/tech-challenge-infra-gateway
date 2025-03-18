@@ -20,8 +20,21 @@ resource "aws_apigatewayv2_route" "ecs_route" {
 
 resource "aws_apigatewayv2_stage" "ecs_stage" {
   api_id      = aws_apigatewayv2_api.ecs_api.id
-  name        = "tech-challenge-test"
+  name        = "tech-challenge"
   auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.ecs_api_log_group.arn
+    format          = jsonencode({
+      requestTime       = "$context.requestTime"
+      httpMethod       = "$context.httpMethod"
+      status           = "$context.status"
+      routeKey         = "$context.routeKey"
+      requestId        = "$context.requestId"
+      identitySource   = "$context.identity.sourceIp"
+      identityUserAgent = "$context.identity.userAgent"
+    })
+  }
 }
 
 resource "aws_apigatewayv2_route_response" "ecs_route_response" {
@@ -42,23 +55,4 @@ resource "aws_apigatewayv2_route_response" "ecs_route_response" {
 
 resource "aws_cloudwatch_log_group" "ecs_api_log_group" {
   name = "/aws/apigateway/ecs-api-access-logs"
-}
-
-resource "aws_apigatewayv2_stage" "ecs_stage" {
-  api_id      = aws_apigatewayv2_api.ecs_api.id
-  name        = "tech-challenge"
-  auto_deploy = true
-
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.ecs_api_log_group.arn
-    format          = jsonencode({
-      requestTime       = "$context.requestTime"
-      httpMethod       = "$context.httpMethod"
-      status           = "$context.status"
-      routeKey         = "$context.routeKey"
-      requestId        = "$context.requestId"
-      identitySource   = "$context.identity.sourceIp"
-      identityUserAgent = "$context.identity.userAgent"
-    })
-  }
 }
