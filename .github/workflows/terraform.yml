@@ -21,17 +21,6 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-west-2
 
-      - name: Instalar AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --update
-
-      - name: Criar o bucket S3
-        run: |
-          aws s3api create-bucket --bucket tech-challenge-tf-state-bucket --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
-        continue-on-error: true
-
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
 
@@ -40,5 +29,5 @@ jobs:
           export TF_LOG=DEBUG
           terraform init
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform destroy
+        run: terraform destroy -auto-approve
